@@ -1,0 +1,48 @@
+name: Terraform CI
+
+on:
+  push:
+    branches:
+      - main4
+  pull_request:
+    branches:
+      - main4
+
+jobs:
+  terraform:
+    name: 'Terraform Plan and Apply'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.6.0
+
+      - name: Terraform Init
+        run: terraform init
+        working-directory: ./terraform-lab6
+
+      - name: Terraform Validate
+        run: terraform validate
+        working-directory: ./terraform-lab6
+
+      - name: Terraform Plan
+        run: terraform plan
+        working-directory: ./terraform-lab6
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+
+      # Якщо хочете автоматичний apply, зніміть коментар нижче
+      # - name: Terraform Apply
+      #   run: terraform apply -auto-approve
+      #   working-directory: ./terraform-lab6
+      #   env:
+      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #     AWS_REGION: ${{ secrets.AWS_REGION }}
