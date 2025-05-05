@@ -1,6 +1,6 @@
 resource "aws_key_pair" "deployer" {
   key_name   = "terraform-key"
-  public_key = file("C:/Users/Dima/.ssh/terraform-key.pub")
+  public_key = file("${path.module}/terraform-key.pub")
 }
 
 resource "aws_security_group" "terraform_sg" {
