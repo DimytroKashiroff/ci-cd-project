@@ -1,51 +1,39 @@
-version: '3.8'
+version: '3'
 
 services:
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.3
-    environment:
-      - discovery.type=single-node
-    ports:
-      - "9200:9200"
-    networks:
-      - efk
-
-  kibana:
-    image: docker.elastic.co/kibana/kibana:7.17.3
-    ports:
-      - "5601:5601"
-    environment:
-      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
-    networks:
-      - efk
-    depends_on:
-      - elasticsearch
-
-  fluentd:
-    build:
-      context: ./efk-bot
-      dockerfile: Dockerfile.fluentd
-    volumes:
-      - ./efk-bot/log:/fluentd/log
-      - ./efk-bot/fluent.conf:/fluentd/etc/fluent.conf
-    ports:
-      - "8080:8080"
-    networks:
-      - efk
-    depends_on:
-      - elasticsearch
-
   bot:
     build:
-      context: ./efk-bot
+      context: .
       dockerfile: Dockerfile
     volumes:
-      - ./efk-bot/log:/fluentd/log
-    networks:
-      - efk
+      - ./log:/fluentd/log
     depends_on:
       - fluentd
 
-networks:
-  efk:
-    driver: bridge
+  fluentd:
+    build:
+      context: .
+      dockerfile: Dockerfile.fluentd
+    volumes:
+      - ./log:/fluentd/log
+      - ./fluent.conf:/fluentd/etc/fluent.conf
+    ports:
+      - "24224:24224"
+      - "24224:24224/udp"
+    depends_on:
+      - elasticsearch
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.9
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    ports:
+      - "9200:9200"
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.17.9
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
