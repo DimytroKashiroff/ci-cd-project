@@ -23,11 +23,11 @@ services:
 
   fluentd:
     build:
-      context: .
+      context: ./efk-bot
       dockerfile: Dockerfile.fluentd
     volumes:
-      - ./log:/fluentd/log
-      - ./fluent.conf:/fluentd/etc/fluent.conf
+      - ./efk-bot/log:/fluentd/log
+      - ./efk-bot/fluent.conf:/fluentd/etc/fluent.conf
     ports:
       - "8080:8080"
     networks:
@@ -36,11 +36,13 @@ services:
       - elasticsearch
 
   bot:
-    build: .
+    build:
+      context: ./efk-bot
+      dockerfile: Dockerfile
+    volumes:
+      - ./efk-bot/log:/fluentd/log
     networks:
       - efk
-    volumes:
-      - ./log:/fluentd/log
     depends_on:
       - fluentd
 
