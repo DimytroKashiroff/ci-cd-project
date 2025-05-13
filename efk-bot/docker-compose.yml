@@ -22,8 +22,10 @@ services:
   fluentd:
     build:
       context: ./fluentd
+      dockerfile: Dockerfile  # явне вказання Dockerfile
     volumes:
       - ./log:/fluentd/log
+      - ./fluentd/fluent.conf:/fluentd/etc/fluent.conf
     ports:
       - "24224:24224"
       - "24224:24224/udp"
