@@ -1,4 +1,4 @@
-FROM ruby:3.1 
+FROM ruby:3.1
 
 # Встановлюємо потрібні утиліти
 RUN apt-get update && apt-get install -y \
@@ -9,10 +9,9 @@ RUN apt-get update && apt-get install -y \
     lsb-release \
  && rm -rf /var/lib/apt/lists/*
 
-# Встановлюємо Fluentd, плагін Elasticsearch та elasticsearch-transport gem
+# Встановлюємо Fluentd та Elasticsearch плагін (стабільна версія)
 RUN gem install fluentd -v "~> 1.14" --no-document \
- && gem install fluent-plugin-elasticsearch -v 5.0.3 --no-document \
- && gem install elasticsearch -v 7.17.10 --no-document
+ && gem install fluent-plugin-elasticsearch -v 4.8.4 --no-document
 
 # Копіюємо конфігурацію
 COPY fluent.conf /fluentd/etc/fluent.conf
