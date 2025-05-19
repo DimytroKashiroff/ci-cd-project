@@ -1,12 +1,25 @@
-sudo apt update
+# EFK Stack Demo Project
 
-sudo apt install ca-certificates curl gnupg
+## Опис проєкту
 
+Цей проєкт демонструє налаштування та використання EFK стеку (Elasticsearch, Fluentd, Kibana) для збору, збереження та візуалізації логів.
 
-sudo install -m 0755 -d /etc/apt/keyrings
+До складу проєкту входить:
 
+- **Elasticsearch** — сховище логів.
+- **Fluentd** — агент, який збирає логи з додатку та відправляє їх в Elasticsearch.
+- **Kibana** — інтерфейс для візуалізації та фільтрації логів.
 
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+Також створено найпростіший тестовий застосунок, який генерує логи у форматі, що зчитує Fluentd. Ці логи можна переглядати та аналізувати у Kibana.
 
+## Вимоги
 
-echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+- Docker (рекомендовано для швидкого запуску стеку)
+- Docker Compose
+
+## Інструкція зі запуску
+
+1. Запустіть EFK стек за допомогою Docker Compose:
+
+   ```bash
+   docker-compose up -d
