@@ -22,7 +22,7 @@ services:
   fluentd:
     build:
       context: ./fluentd
-      dockerfile: Dockerfile  # явне вказання Dockerfile
+      dockerfile: Dockerfile
     volumes:
       - ./log:/fluentd/log
       - ./fluentd/fluent.conf:/fluentd/etc/fluent.conf
@@ -33,6 +33,17 @@ services:
       - efk
     depends_on:
       - elasticsearch
+
+  bot:
+    build:
+      context: .
+      dockerfile: Dockerfile.bot
+    volumes:
+      - ./log:/fluentd/log
+    depends_on:
+      - fluentd
+    networks:
+      - efk
 
 networks:
   efk:
