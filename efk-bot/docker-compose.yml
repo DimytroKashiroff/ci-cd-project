@@ -2,49 +2,44 @@ version: '3.7'
 
 services:
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.1
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.0
+    container_name: efk-bot_elasticsearch
     environment:
       - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
     ports:
       - "9200:9200"
-    networks:
-      - efk
 
   kibana:
-    image: docker.elastic.co/kibana/kibana:7.10.1
+    image: docker.elastic.co/kibana/kibana:7.17.0
+    container_name: efk-bot_kibana
     ports:
       - "5601:5601"
-    networks:
-      - efk
     depends_on:
       - elasticsearch
 
   fluentd:
     build:
       context: ./fluentd
-      dockerfile: Dockerfile
+    container_name: efk-bot_fluentd
     volumes:
       - ./log:/fluentd/log
-      - ./fluentd/fluent.conf:/fluentd/etc/fluent.conf
-    ports:
-      - "24224:24224"
-      - "24224:24224/udp"
-    networks:
-      - efk
     depends_on:
       - elasticsearch
 
   bot:
-    build:
-      context: .
-      dockerfile: Dockerfile.bot
+    image: python:3.11-slim
+    container_name: efk-bot_bot
     volumes:
+      - ./bot:/bot
       - ./log:/fluentd/log
+    working_dir: /bot
+    command: ["python", "bot.py"]
+    restart: always
     depends_on:
       - fluentd
-    networks:
-      - efk
-
-networks:
-  efk:
-    driver: bridge
