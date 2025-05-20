@@ -14,7 +14,7 @@ handler = logging.StreamHandler()
 formatter = logging.Formatter('%(asctime)s %(name)s [%(levelname)s] %(message)s')
 handler.setFormatter(formatter)
 logger.addHandler(handler)
-в
+
 def log_to_fluent(level: str, extra_data: dict):
     record = {
         'timestamp': datetime.utcnow().isoformat(),
